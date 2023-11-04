@@ -1,6 +1,7 @@
 import '@fontsource/inter/latin.css';
 
 import { HelmetProvider } from 'react-helmet-async';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import {
   ColorScheme,
   ColorSchemeProvider,
@@ -11,12 +12,12 @@ import { useLocalStorage } from '@mantine/hooks';
 import { useEffect } from 'react';
 import { Notifications } from '@mantine/notifications';
 import { ModalsProvider } from '@mantine/modals';
-import { SWRConfig } from 'swr';
-import { axios } from '@axios';
 import { Metadata } from '@/components/Metadata';
 import { mantineConfig } from '@/lib/theme/mantineConfig';
 import { Layout } from '@/layouts';
 import { initializeApp } from '@/lib/core/init';
+
+const queryClient = new QueryClient();
 
 const cache = createEmotionCache({
   key: 'mantine',
@@ -60,12 +61,7 @@ export default function App() {
   }, [colorScheme]);
 
   return (
-    <SWRConfig
-      value={{
-        fetcher: (resource, init) =>
-          axios(resource, init).then((res) => res.data),
-      }}
-    >
+    <QueryClientProvider client={queryClient}>
       <ColorSchemeProvider
         colorScheme={colorScheme}
         toggleColorScheme={toggleColorScheme}
@@ -88,6 +84,6 @@ export default function App() {
           </HelmetProvider>
         </MantineProvider>
       </ColorSchemeProvider>
-    </SWRConfig>
+    </QueryClientProvider>
   );
 }

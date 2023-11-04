@@ -1,11 +1,18 @@
 import { Card } from '@mantine/core';
-import useSWR from 'swr';
+import { useQuery } from '@tanstack/react-query';
 import { User } from '@auth';
 import { MantineReactTable } from 'mantine-react-table';
 import type { HandleFunctionResolver } from '@/router';
 
 export default function DataUser() {
-  const { data } = useSWR<User[]>('/user');
+  const { data } = useQuery<User[]>({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const user = await fetch('/api/user').then((res) => res.json());
+
+      return user;
+    },
+  });
 
   return (
     <Card>
